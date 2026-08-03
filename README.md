@@ -25,6 +25,11 @@ symlinks everything into each harness (OMP, Claude Code, Codex).
 - `comms` — authored here. Human-facing writing style: message shape from
   [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) (MIT), sentence
   mechanics from ASD-STE100, word choice from Orwell's six rules.
+- `system-recap` — adapted here from
+  [kentcdodds/kcd-skills](https://github.com/kentcdodds/kcd-skills) (MIT):
+  PR-description system recap with composes/extends/adds classification.
+  Block format kept ingestion-compatible with upstream. Do not overwrite on
+  refresh.
 - `thermo-nuclear-code-quality-review`, `verify-this`, `run-smoke-tests`,
   `check-compiler-errors` — Cursor's official skills from
   [cursor/plugins `cursor-team-kit/skills`](https://github.com/cursor/plugins/tree/main/cursor-team-kit/skills).
