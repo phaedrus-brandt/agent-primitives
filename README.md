@@ -1,8 +1,8 @@
 # agent-primitives
 
 The single source of truth for agent configuration on this machine: skills,
-shared doctrine, MCP servers, and subagent identities, symlinked into every
-harness (OMP, Claude Code, Codex) by `./install.sh`.
+shared doctrine, MCP servers, and subagent identities. `./install.sh`
+symlinks everything into each harness (OMP, Claude Code, Codex).
 
 ## Layout
 
@@ -22,6 +22,9 @@ harness (OMP, Claude Code, Codex) by `./install.sh`.
 
 ## Skill provenance
 
+- `comms` — authored here. Human-facing writing style: message shape from
+  [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) (MIT), sentence
+  mechanics from ASD-STE100, word choice from Orwell's six rules.
 - `thermo-nuclear-code-quality-review`, `verify-this`, `run-smoke-tests`,
   `check-compiler-errors` — Cursor's official skills from
   [cursor/plugins `cursor-team-kit/skills`](https://github.com/cursor/plugins/tree/main/cursor-team-kit/skills).
@@ -32,14 +35,16 @@ harness (OMP, Claude Code, Codex) by `./install.sh`.
   writing-great-skills).
 
 To refresh vendored skills, re-clone the upstream repos and copy the skill
-directories over; names are the dedup key across harnesses.
+directories over. Names are the dedup key across harnesses. Do not overwrite
+`comms` on refresh — it is ours.
 
 ## Model policy (see `~/.omp/agent/config.yml`)
 
-Orchestrator pattern, token-savvy: frontier Anthropic drives judgment;
-subagents run on Sonnet 5 (worker), GPT 5.6 Luna xhigh (review/heavy
+Orchestrator pattern, token-savvy: frontier Anthropic drives judgment.
+Subagents run on Sonnet 5 (worker), GPT 5.6 Luna xhigh (review/heavy
 alternative), Opus 5 (heavy), and local Ollama models (scout/sonic lanes).
-When Anthropic or OpenAI hit usage limits or provider errors, `retry.fallbackChains`
-drops the turn onto local Ollama models and reverts when the cooldown expires.
-The Apollo API key lives in the macOS keychain (`security find-generic-password
--s apollo-api-key`), resolved by OMP's `!command` env indirection — never in git.
+When Anthropic or OpenAI hit usage limits or provider errors,
+`retry.fallbackChains` drops the turn onto local Ollama models and reverts
+when the cooldown expires. The Apollo API key lives in the macOS keychain
+(`security find-generic-password -s apollo-api-key`), resolved by OMP's
+`!command` env indirection — never in git.
