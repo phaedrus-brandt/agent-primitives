@@ -141,7 +141,7 @@ Heading verdicts, by traffic light:
 
 Required in recap mode. Keep the evidence table to the load-bearing claims — 3 to 7 rows. This block is this stack's extension to the upstream kcd format; parsers treat unknown blocks and sections as optional.
 
-**Boot proof rule:** when the diff touches anything the app executes or loads at startup — app code, config files read at boot (vite/vitest/framework config), dependency manifests, build tooling — the evidence packet MUST include a boot row: the app built and booted on this branch and key routes answered. Unit tests and config-load smokes do not substitute for a running app.
+**Boot proof rule:** when the diff touches anything the app executes or loads at startup — app code, config files read at boot (vite/vitest/framework config), dependency manifests, build tooling — the evidence packet MUST include a boot row: the app built and booted on this branch and key routes answered. When the diff touches authenticated surfaces or flows, the evidence packet MUST include an authenticated row: a real sign-in (or minted test token) exercised the protected route, plus a 401/redirect proof that the gate still gates. Unit tests and config-load smokes do not substitute for a running app.
 
 ## Merge readiness — likelihood, consequence, evidence
 
