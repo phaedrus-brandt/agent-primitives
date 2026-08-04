@@ -81,17 +81,6 @@ blocks or tables._
 
 _Optional: only when the change touches an invariant from primitives.yaml._
 
-### Merge readiness
-
-**Confidence: 5/5 — merge.** Every load-bearing claim below is evidenced. ·
-**Consequence if wrong: moderate** — blocked PRs; one-commit revert.
-**Review effort:** 2/5. **Read order:** gate script → workflow → docs.
-
-| # | Claim | Evidence |
-| --- | --- | --- |
-| 1 | Gate fails on regression | red-path run output, exit 1 (link) |
-| 2 | Current main passes | live CI run 30853482738, green in 3m58s |
-
 ### Plan vs actual
 
 _Recap mode only, when a plan-mode block existed: what shipped as planned and
@@ -107,9 +96,35 @@ Format rules:
 - The `<summary>` line carries the overall classification and risk in bold, visible without expanding.
 - Put a blank line after `<summary>` and around every fenced block, or GitHub will not render markdown inside `<details>`.
 - **System map**: show touched primitives plus their immediate neighbors — never the whole map. Use the four `classDef` styles (`touched` = composes, `extended`, `added`, `untouched` for context). Quote node labels that contain spaces.
-- **Merge readiness** is required in recap mode (see next section). Keep the evidence table to the load-bearing claims — 3 to 7 rows.
 - Keep the block scannable: tables and diagrams over prose, well under ~120 lines.
-- "Merge readiness" is this stack's extension to the upstream kcd format; parsers must treat unknown sections as optional.
+
+## PR description contract
+
+The reviewer's first question is "can I merge this?" — answer it first. A PR description has this order, and `skill://comms` governs every line of it:
+
+1. **Merge readiness block** (format below) at the very top — never inside `<details>`, never below the fold. The verdict is the first line of the body.
+2. The summary: what changed and why, answer-first per `skill://comms`.
+3. Evidence detail (command outputs, run links) as needed.
+4. The system recap `<details>` block last — architecture context may collapse; risk may not.
+
+## Merge readiness block
+
+Lives between its own markers so tooling can upsert it independently (`upsert-recap-block.mjs <pr> <file> --marker merge-readiness --prepend`):
+
+````markdown
+<!-- merge-readiness:start -->
+
+**Merge readiness: confidence 5/5 — merge.** Consequence if wrong: **moderate** — blocked PRs; one-commit revert. Review effort 2/5; read gate script → workflow → docs.
+
+| # | Claim | Evidence |
+| --- | --- | --- |
+| 1 | Gate fails on regression | red-path run output, exit 1 (link) |
+| 2 | Current main passes | live CI run 30853482738, green in 3m58s |
+
+<!-- merge-readiness:end -->
+````
+
+Required in recap mode. Keep the evidence table to the load-bearing claims — 3 to 7 rows. This block is this stack's extension to the upstream kcd format; parsers treat unknown blocks and sections as optional.
 
 ## Merge readiness — likelihood, consequence, evidence
 
