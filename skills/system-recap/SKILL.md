@@ -81,6 +81,17 @@ blocks or tables._
 
 _Optional: only when the change touches an invariant from primitives.yaml._
 
+### Merge readiness
+
+**Confidence: 5/5 — merge.** Every load-bearing claim below is evidenced. ·
+**Consequence if wrong: moderate** — blocked PRs; one-commit revert.
+**Review effort:** 2/5. **Read order:** gate script → workflow → docs.
+
+| # | Claim | Evidence |
+| --- | --- | --- |
+| 1 | Gate fails on regression | red-path run output, exit 1 (link) |
+| 2 | Current main passes | live CI run 30853482738, green in 3m58s |
+
 ### Plan vs actual
 
 _Recap mode only, when a plan-mode block existed: what shipped as planned and
@@ -96,7 +107,40 @@ Format rules:
 - The `<summary>` line carries the overall classification and risk in bold, visible without expanding.
 - Put a blank line after `<summary>` and around every fenced block, or GitHub will not render markdown inside `<details>`.
 - **System map**: show touched primitives plus their immediate neighbors — never the whole map. Use the four `classDef` styles (`touched` = composes, `extended`, `added`, `untouched` for context). Quote node labels that contain spaces.
+- **Merge readiness** is required in recap mode (see next section). Keep the evidence table to the load-bearing claims — 3 to 7 rows.
 - Keep the block scannable: tables and diagrams over prose, well under ~120 lines.
+- "Merge readiness" is this stack's extension to the upstream kcd format; parsers must treat unknown sections as optional.
+
+## Merge readiness — likelihood, consequence, evidence
+
+Risk has two independent axes. Score both; never blend them into one number.
+
+**Confidence (likelihood the change is correct) — evidence drives this up:**
+
+| Score | Meaning | Action |
+| --- | --- | --- |
+| 5/5 | Every load-bearing claim has direct evidence (live run, red+green path, screenshot) | Merge |
+| 4/5 | Core behavior evidenced; periphery inferred | Merge after small fixes |
+| 3/5 | Local verification only, or evidence gaps on real claims | Address gaps first |
+| 2/5 | Compiles and unit-tests only | Needs verification work |
+| 0–1/5 | Untested or unverifiable | Do not merge |
+
+**Consequence (what happens if it is wrong anyway) — evidence CANNOT reduce this; only design can (reversibility, feature flags, staged rollout):**
+
+| Level | Meaning |
+| --- | --- |
+| catastrophic | Money moved wrongly, data lost, tenant isolation broken, security hole |
+| major | User-facing outage or wrong user-visible money/data display |
+| moderate | Internal breakage, blocked developers, recoverable state |
+| minor | Cosmetic, logs, docs |
+
+Rules:
+
+- State both scores and the recovery path (how many commits to revert; any irreversible step) on the first line of the section.
+- **Low likelihood × catastrophic consequence gets called out explicitly** and named in the `<summary>` line — a 1% chance of a wrong refund calculation outranks a 50% chance of a broken lint rule. Consequence ≥ major always names its recovery path and asks for deeper review, whatever the confidence.
+- The **evidence packet** is what earns the confidence score: one row per load-bearing claim, each pointing at a command with output, a live CI run, or a visual. UI changes MUST attach screenshots or a GIF walkthrough — prose cannot prove a rendered surface. Claims without evidence rows cap confidence at 3/5.
+- **Review effort** (1–5, CodeRabbit-style: files × nature × logic complexity) and a suggested **read order** through the diff give the reviewer an entry path.
+- Confidence is contextual to consequence: say "4/5 on a money path" rather than letting a bare number reassure.
 
 ## Workflow
 

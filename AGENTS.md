@@ -52,6 +52,12 @@ files a subagent can summarize.
 - **Review the system, not just the diff.** Every non-trivial PR carries a
   system recap block per `skill://system-recap`: classify the change as
   composes, extends, or adds before anyone opens the diff.
+- **Ship the evidence packet; score risk on two axes.** Every PR states
+  confidence (0–5, earned by attached evidence: red+green runs, live CI,
+  screenshots or a GIF for anything rendered) and consequence-if-wrong
+  (minor → catastrophic, with the recovery path). Evidence lowers likelihood;
+  only design lowers consequence. Low likelihood × catastrophic consequence
+  gets named out loud, never averaged away.
 
 ## Work ledger
 
