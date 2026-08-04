@@ -114,7 +114,14 @@ Lives between its own markers so tooling can upsert it independently (`upsert-re
 ````markdown
 <!-- merge-readiness:start -->
 
-**Merge readiness: confidence 5/5 — merge.** Consequence if wrong: **moderate** — blocked PRs; one-commit revert. Review effort 2/5; read gate script → workflow → docs.
+### 🟢 Merge ready — confidence 5/5, consequence moderate
+
+|  |  |
+| --- | --- |
+| **Confidence** | 5/5 — every load-bearing claim evidenced below |
+| **Consequence if wrong** | moderate — blocked PRs; false-green = status quo |
+| **Recovery** | one-commit revert |
+| **Review** | effort 2/5 · read gate script → workflow → docs |
 
 | # | Claim | Evidence |
 | --- | --- | --- |
@@ -123,6 +130,14 @@ Lives between its own markers so tooling can upsert it independently (`upsert-re
 
 <!-- merge-readiness:end -->
 ````
+
+Heading verdicts, by traffic light:
+
+| Emoji | Heading | When |
+| --- | --- | --- |
+| 🟢 | Merge ready | confidence ≥ 4 AND consequence ≤ moderate |
+| 🟡 | Merge with caution | confidence 3, OR consequence major |
+| 🔴 | Do not merge yet | confidence ≤ 2, OR consequence catastrophic (always red, whatever the confidence — this is the low-likelihood × catastrophic callout) |
 
 Required in recap mode. Keep the evidence table to the load-bearing claims — 3 to 7 rows. This block is this stack's extension to the upstream kcd format; parsers treat unknown blocks and sections as optional.
 
