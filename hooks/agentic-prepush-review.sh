@@ -21,10 +21,13 @@
 
 set -u
 
+# Worktree-safe: .git may be a gitlink file in linked worktrees.
+GITDIR=$(git rev-parse --git-dir 2>/dev/null) || GITDIR=.git
+
 # ---------------------------------------------------------------- environment
 [ "${AGENTIC_REVIEW:-1}" = "0" ] && {
-    mkdir -p .git/agentic-review 2>/dev/null
-    printf '%s bypass AGENTIC_REVIEW=0 by %s\n' "$(date -u +%FT%TZ)" "$(git config user.email)" >> .git/agentic-review/bypass.log 2>/dev/null
+    mkdir -p "$GITDIR/agentic-review" 2>/dev/null
+    printf '%s bypass AGENTIC_REVIEW=0 by %s\n' "$(date -u +%FT%TZ)" "$(git config user.email)" >> "$GITDIR/agentic-review/bypass.log" 2>/dev/null
     echo "agentic-review: bypassed (AGENTIC_REVIEW=0) - logged."
     exit 0
 }
@@ -137,7 +140,7 @@ if [ -z "$TIER" ]; then
 fi
 
 # ---------------------------------------------------------------------- cache
-CACHE_DIR=".git/agentic-review"; mkdir -p "$CACHE_DIR"
+CACHE_DIR="$GITDIR/agentic-review"; mkdir -p "$CACHE_DIR"
 CACHE_KEY="$CACHE_DIR/clean-$LOCAL_SHA-t$TIER"
 if [ -f "$CACHE_KEY" ]; then
     echo "agentic-review: $LOCAL_SHA already reviewed clean at tier $TIER - skipping."
