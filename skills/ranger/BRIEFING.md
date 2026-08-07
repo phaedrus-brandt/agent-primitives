@@ -1,46 +1,42 @@
-# Briefing — HTML report spec
+# Briefing — HTML triage artifact spec
 
-Reference for the brief step. The briefing is one self-contained HTML file: `~/.config/ranger/runs/<date>/report.html`. Findings are what the PM acts on; the report is how she reads them. Present the file path and the lead sentence in chat; the report carries everything else.
+Reference for the brief step. The briefing is one self-contained HTML file — `~/.config/ranger/runs/<date>/report.html` — built to the "Coverage Spine" design (reference implementation: patrol #1's design-22). Present the file path and the lead sentence in chat; the artifact carries everything else.
 
 ## Hard rules
 
 - **Every claim traces to a finding id.** A number, a trend, a warning — if no finding carries it, it does not appear.
-- **New findings lead.** Findings already reported and still open get one row, never a second argument.
-- **A clean patrol is one line.** Render the lead sentence and the still-open table; nothing else. Padding a quiet night teaches the reader to skim.
-- **Re-raised findings announce themselves.** A finding returning from dismissal states the dismissal date and the change that brought it back.
-- **Self-contained and offline.** One file: inline CSS, system fonts, no script needed for reading (a few lines of inline JS for collapse-all is fine). Zero external requests — card data must never call out to a CDN, tracker, or font host.
-- **Every card punches out.** Each card id links to `https://dev.azure.com/BrandtInfoServices/Itinio%20Software%20Development/_workitems/edit/<id>`, opening in a new tab.
+- **Coverage is legible by design, not copy.** The reader must see how the whole board decomposes without a paragraph explaining it.
+- **Humble register.** Ranger assists experts; it never commands. "Worth a look first", "may already be done" — never "Triage these first", never bare imperatives outside the suggested-action text itself.
+- **New findings lead; carried findings get one row; a clean patrol renders the spine and one sentence.** Re-raised findings state the dismissal date and what changed.
+- **Self-contained and offline.** Inline CSS/JS, system font stacks, zero external requests — card data never calls a CDN, tracker, or font host.
+- **Nothing requires punching out.** Full card content (description, repro, acceptance criteria, assignee, filed-by, iteration, tags, comments) renders inline. ADO links (`https://dev.azure.com/BrandtInfoServices/Itinio%20Software%20Development/_workitems/edit/<id>`, new tab) are secondary affordances on every card id.
 
 ## Structure, top to bottom
 
-1. **Title band** — full-width near-black band, report title ("Ranger patrol"), date, patrol number. This is the page's signature; keep everything below it quiet.
-2. **Lead** — the single most important thing this patrol found, one or two sentences, set large.
-3. **Urgency lane** — only when a finding qualifies (priority-anomaly at 0.9+, or a duplicate touching an active-state card). Distinct left border in the accent color; never used elsewhere.
-4. **New findings, grouped by kind** — cohorts first, then duplicates, priority anomalies, missing-context, per-card stale. Each finding is a card row: id, one-line summary, confidence, linked card ids with created dates, suggested action. Evidence and drafts sit inside `<details>` blocks, closed by default. Drafts open with "Proposed by Ranger — verify before use".
-5. **Long tails as tables** — when one kind exceeds 15 per-card findings, render one sortable-by-column-order table (oldest state change first) inside a `<details>` block that names the count, instead of finding rows.
-6. **Still open / Resolved** — one table each, one row per finding: id, summary, first reported (and for resolved: how). Omit an empty section entirely.
-7. **Footer strip** — backlog count, Invoices partition count, patrol timestamp, finding totals by kind.
+1. **Header** — patrol title + date, lead sentence (truncating, full text in `title`), live decided/remaining stats, Browse|Focus switch (sliding indicator, key `v`), "Copy session summary" (plain-text ACCEPTED/DISMISSED digest of the session's verdicts — the text that feeds back into `memory.jsonl`).
+2. **Coverage spine** — the signature element: one segmented horizontal bar decomposing every open item on the board, segments proportional and labeled with counts, summing exactly to the open total. Segments are interactive: the findings segment focuses the table; inventory segments open a searchable drawer listing their cards. A bracket names the scanned set; a callout names the findings count.
+3. **Toolbar** — search, kind chips with live counts, Undecided/Decided/All segment, sort (confidence / created / cards touched / kind, asc-desc), collapse-all. All combinable; counts stay truthful.
+4. **Findings table** — grouped under sticky collapsible headers with humble one-line group descriptions. Row anatomy: quiet chip, mono id, sans one-line summary, mono confidence/created. Mono ONLY for ids, dates, counts. Cohort rows carry a `+N` member badge.
+5. **Peek panel** (row click / Enter) — full evidence, suggested action, and per-card inline expansion with the full card record and comment thread. Action footer (see below).
+6. **Focus view** (`v`) — the same queue one finding at a time: full-detail centered card, thin progress rail, same action footer; ends in a session receipt.
+7. **Footer strip** — patrol metadata and finding totals by kind.
+
+## Action footer (peek + focus share one component)
+
+Primary button `Accept — <start of suggested action>…` (full text in `title`), quiet Dismiss and Skip, contextual Undo, right-aligned `<kbd>` hints. Decisions persist to localStorage (`{findingId: {status, at}}`); undo everywhere; reload restores.
+
+## Keyboard contract
+
+`j/k` move · `Enter` peek · `Esc` close/back · `a` accept · `d` dismiss · `s` skip · `u` undo · `v` toggle view. Keyboard actions are always instant — animation never rides a keystroke.
 
 ## Design tokens
 
-Grounded in the subject: a park-service patrol report (Unigrid brochure vernacular — the board's world is parks, marinas, campgrounds).
+Light surface (`#FFFFFF` cards on `#FAFAFB`), hairline borders `#E6E8EB`, ink `#1A1F36` / secondary `#6A7383` (≥4.5:1 verified), ONE indigo accent `#5E6AD2` for selection and primary actions, amber reserved for the urgency lane, green only for accepted. Lucide-style inline SVG icons (24×24, `stroke=currentColor`, width 2, round caps) — external-link on card ids, check/x/skip-forward on actions. 13–14px UI text, 8px grid, 6px radii, layered soft shadow on floating surfaces only.
 
-- **Palette:** band `#1A1A18`; paper `#FCFBF8`; ink `#22221F`; forest `#2F5D3A` (accepted/resolved, confidence marks); blaze `#C75000` (urgency lane only); rule gray `#D9D6CE`.
-- **Type:** system sans stack for everything; headings in heavy weight with tight tracking; card ids, dates, and counts in the system mono stack. No webfonts.
-- **Layout:** single column, max width ~72ch, generous whitespace; thick 3px rules between kind sections, hairline rules between rows. Confidence renders as a small mono figure (`0.95`), not a progress bar.
-- **Register:** all copy follows the register rules below. Buttons/links say what they do ("Open #428640").
+## Motion
 
-Responsive to mobile, visible keyboard focus, honors `prefers-reduced-motion` (no motion is the default anyway).
+Purposeful and pointer-gated: one-time staggered reveal on first paint, checkmark draw on pointer-accept, count transitions, 200ms `cubic-bezier(0.23,1,0.32,1)` panel slide, `scale(0.98)` press on pressables. Under 300ms everywhere. `prefers-reduced-motion` disables all of it.
 
 ## Register
 
-Simplified Technical English throughout:
-
-- Lead with the verdict or the action; context after, if at all.
-- One instruction per sentence, verb first, active voice, present tense. Under 20 words.
-- The condition comes before the instruction: "If the pair is a mirror, dismiss."
-- The same name for the same thing every time. Card references are `#428640` with the title on first mention only.
-- Concrete numbers and dates: "23 cards", "created 2025-01-14" — never "roughly two dozen" or "quite old". Show created dates wherever cards appear; the ADO UI hides them.
-- Cut every word that earns nothing. State facts flat. Keep a hedge only when it carries real uncertainty, attached to the specific claim ("the titles match; the descriptions differ — verify before closing").
-
-The reader decides; the report informs. Recommend, give the evidence, stop.
+Simplified Technical English: verb-first, one instruction per sentence, condition before instruction, same name for the same thing, concrete numbers and dates ("23 cards", "created 2025-01-14" — the ADO UI hides created dates, so the artifact always shows them). Hedges only where uncertainty is real, attached to the specific claim. The reader decides; the artifact informs.
