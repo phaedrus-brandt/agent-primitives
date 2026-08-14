@@ -71,3 +71,10 @@ comments, or provider-native task tools.
 - No destructive Git unless explicitly requested.
 - Never revert or overwrite the user's work without explicit instruction.
 - No "validated" claim without the exact command or artifact that proves it.
+- **Never merge a PR** (`gh pr merge`, automerge, merge-queue enqueue, or any
+  equivalent) without explicit human approval for that specific PR — or an
+  explicitly named list of PRs — given in the CURRENT conversation, after the
+  human has had the chance to review. Approval for one batch never carries
+  forward to later PRs. Opening PRs, pushing branches, and marking ready are
+  fine; merging is a human decision. When work is done, present the PR list
+  with evidence and STOP.

@@ -11,3 +11,6 @@
 - Human-facing prose follows `skill://comms`: answer first, plain words, the
   same name for the same thing.
 - Habitat (`apollo` MCP) is the work ledger of record.
+- NEVER merge a PR without explicit human approval for that specific PR (or
+  named batch) in the current conversation. Prior batch approvals never carry
+  forward. Open PRs, push branches, present evidence — then stop.
