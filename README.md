@@ -8,12 +8,24 @@ symlinks everything into each harness (OMP, Claude Code, Codex).
 
 - `AGENTS.md` — shared operating doctrine → `~/.claude/CLAUDE.md` (Claude Code
   + OMP), `~/.codex/AGENTS.md` (Codex)
-- `RULES.md` — OMP always-apply rule → `~/.omp/agent/RULES.md`
+- `RULES.md` — OMP-only rules → `~/.omp/agent/RULES.md`. Everything shared lives
+  in `AGENTS.md`.
 - `skills/` — curated skills → `~/.claude/skills/*` (Claude Code + OMP) and
-  `~/.codex/skills/*` (Codex)
-- `mcp/mcp.json` — MCP servers (Habitat/apollo) → `~/.omp/agent/mcp.json`.
-  Claude Code carries apollo in `~/.claude.json` (user scope); Codex in
-  `~/.codex/config.toml`.
+  `~/.codex/skills/*` (Codex). `scripts/check-skills.sh` validates them before
+  linking.
+- `mcp/mcp.json` — the one MCP definition (Habitat/apollo, azure-devops), plus
+  OMP's `disabledServers` denylist → symlinked to `~/.omp/agent/mcp.json`.
+  `install.sh` generates the harness copies from it: a managed region in
+  `~/.codex/config.toml` (Codex-only extras appended from `mcp/codex-extras.toml`)
+  and `.mcpServers` entries in `~/.claude.json`. `!command` env values are
+  resolved at install time for harnesses without indirection.
+  The denylist hides `node_repl`: Codex declares that server with a command inside
+  the ChatGPT/Codex app bundle, OMP discovers Codex's servers, and OMP has its own
+  `eval` and `browser` tools. If the app moves again, Codex rewrites the block and
+  OMP stays quiet.
+- `hooks/agentic-prepush-review.sh` — risk-tiered review gate. Opt in per repo:
+  `./install.sh --hooks <repo>`. It loads the thermo rubric from the installed
+  `review` skill.
 - `agents/claude/` — Claude Code subagents (worker/scout/critic) →
   `~/.claude/agents/`
 - `agents/omp/` — OMP task agents (heavy) → `~/.omp/agent/agents/`. Bundled
@@ -30,18 +42,28 @@ symlinks everything into each harness (OMP, Claude Code, Codex).
   PR-description system recap with composes/extends/adds classification.
   Block format kept ingestion-compatible with upstream. Do not overwrite on
   refresh.
-- `thermo-nuclear-code-quality-review`, `verify-this`, `run-smoke-tests`,
-  `check-compiler-errors` — Cursor's official skills from
+- `review` — assembled here. One auto-invocable door with four depths:
+  `reviewer` subagent, the `autoreview` engine, `TWO-AXIS.md` (Pocock's
+  `code-review`, standards + spec), and `THERMO.md` (Cursor's
+  thermo-nuclear rubric, also loaded by the pre-push hook). It replaces the old
+  `code-review` and `thermo-nuclear-code-quality-review` skills and
+  `hooks/review-prompts/`.
+- `autoreview` — vendored from
+  [openclaw/agent-skills](https://github.com/openclaw/agent-skills)
+  (see `skills/autoreview/.vendored-from`); carries the `scripts/autoreview`
+  engine. Command-only; `review` is its door.
+- `verify-this`, `run-smoke-tests`, `check-compiler-errors` — Cursor's official
+  skills from
   [cursor/plugins `cursor-team-kit/skills`](https://github.com/cursor/plugins/tree/main/cursor-team-kit/skills).
 - `frontend-design` — verbatim from
   [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/frontend-design)
   (LICENSE.txt kept alongside). OMP also bundles this skill; the repo copy
   shadows it and gives Claude Code + Codex the same version.
 - Everything else — [mattpocock/skills](https://github.com/mattpocock/skills)
-  (MIT): engineering set (tdd, code-review, diagnosing-bugs, implement,
-  research, triage, to-spec, domain-modeling, codebase-design,
-  improve-codebase-architecture, prototype, resolving-merge-conflicts) +
-  productivity set (grill-me, grilling, handoff, writing-great-skills).
+  (MIT): engineering set (tdd, diagnosing-bugs, implement, research, triage,
+  to-spec, domain-modeling, codebase-design, improve-codebase-architecture,
+  prototype, resolving-merge-conflicts) + productivity set (grill-me, grilling,
+  handoff, writing-great-skills).
 
 To refresh vendored skills, re-clone the upstream repos and copy the skill
 directories over. Names are the dedup key across harnesses. Do not overwrite

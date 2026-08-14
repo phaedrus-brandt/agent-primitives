@@ -1,6 +1,9 @@
-# Thermo-Nuclear Structural Review Rubric (pre-push T3)
+# Thermo-Nuclear Structural Review Rubric
 
-Apply this ON TOP of the standard review. This push is large and/or touches high-risk paths; review structure as aggressively as correctness.
+The **Thermo** depth of `skill://review`. Apply it ON TOP of another review depth,
+when the diff is large, touches a high-risk path, or the user asks for a deep or
+harsh maintainability audit. The pre-push hook loads this same file at tier 3.
+Review structure as aggressively as correctness.
 
 Start from this baseline:
 

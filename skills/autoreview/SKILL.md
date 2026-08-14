@@ -1,6 +1,7 @@
 ---
 name: autoreview
-description: "Pre-commit/ship code review: Codex default; optional Claude, Pi, or Kimi."
+description: "The review engine behind skill://review: a structured second-model review of the change bundle. Codex by default; Claude, Pi, or Kimi optional."
+disable-model-invocation: true
 ---
 
 # Auto Review

@@ -1,0 +1,27 @@
+# Codex-only extras with no equivalent in mcp/mcp.json's canonical JSON.
+# install.sh appends this file verbatim inside the managed region of
+# ~/.codex/config.toml, after the generated [mcp_servers.*] blocks.
+
+[mcp_servers.apollo.tools.query_action_items]
+approval_mode = "approve"
+
+[mcp_servers.apollo.tools.mutate_work_item]
+approval_mode = "approve"
+
+[mcp_servers.apollo.tools.mutate_action_item]
+approval_mode = "approve"
+
+[mcp_servers.apollo.tools.query_work_items]
+approval_mode = "approve"
+
+[mcp_servers.apollo.tools.query_governance]
+approval_mode = "approve"
+
+[mcp_servers.apollo.tools.query_debt_items]
+approval_mode = "approve"
+
+[mcp_servers.apollo.tools.mutate_debt_item]
+approval_mode = "approve"
+
+[mcp_servers.apollo.tools.mutate_governance]
+approval_mode = "approve"

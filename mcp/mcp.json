@@ -1,4 +1,5 @@
 {
+  "disabledServers": ["node_repl"],
   "mcpServers": {
     "apollo": {
       "command": "node",

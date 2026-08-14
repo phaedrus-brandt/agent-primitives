@@ -91,7 +91,16 @@ IGNORE="$IGNORE
 
 ZERO="0000000000000000000000000000000000000000"
 SELF_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-THERMO_PROMPT="$SELF_DIR/review-prompts/thermo.md"
+# Thermo rubric: canonical copy ships with the review skill; repo-vendored copy is
+# the fallback for machines without agent-primitives installed.
+THERMO_PROMPT=""
+for cand in \
+    "${AGENTIC_THERMO_PROMPT:-}" \
+    "$HOME/.claude/skills/review/THERMO.md" \
+    "$HOME/.agents/skills/review/THERMO.md" \
+    "$SELF_DIR/review-prompts/thermo.md"; do
+    [ -n "$cand" ] && [ -f "$cand" ] && THERMO_PROMPT="$cand" && break
+done
 CACHE_DIR="$GITDIR/agentic-review"; mkdir -p "$CACHE_DIR"
 
 # --------------------------------------------------------------- per-ref gate

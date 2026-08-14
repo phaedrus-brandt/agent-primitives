@@ -20,6 +20,9 @@ Write so a tired human can act on the first read. Work in three layers: shape th
 
 ## Shape each sentence
 
+These are the ASD-STE100 rules (Simplified Technical English). They are mandatory
+for anything a human reads, not a style preference.
+
 - Put one instruction in each sentence. Start the instruction with the verb ("Run `pnpm test`", not "The tests can be run").
 - Keep sentences under about 20 words for instructions, 25 for description.
 - Use active voice and present tense.
@@ -28,6 +31,9 @@ Write so a tired human can act on the first read. Work in three layers: shape th
 - Call the same thing by the same name every time. Renaming for variety makes the reader check whether two names mean two things.
 - Break up chains of more than 3 nouns ("cart checkout payment retry logic" → "the retry logic for checkout payments").
 - Keep the articles. "Remove bolt" reads faster than it parses; "remove the bolt" parses first time.
+- Give each word one meaning and one part of speech in a document. Do not use "review" as both the noun and the verb in the same paragraph.
+- Never use a gerund as a noun. "For the running of the build" → "to run the build".
+- Write one word for one thing. Do not vary "task", "job", and "work item" for the same object.
 
 ## Choose each word
 
