@@ -70,6 +70,9 @@ if [ "${1:-}" = "--hooks" ]; then
   exit 0
 fi
 
+# Harnesses covered: OMP, Claude Code, Codex CLI. Pi is not installed on this
+# machine (no `pi` on PATH; ~/.pi holds stale agents from July). When it returns,
+# it needs two links: ~/.pi/agents/*.md and a skills root, if Pi grows one.
 echo "skills:"
 "$REPO/scripts/check-skills.sh"
 mkdir -p ~/.claude/skills ~/.codex/skills
