@@ -33,11 +33,15 @@ symlinks everything into each harness (OMP, Claude Code, Codex).
 - `thermo-nuclear-code-quality-review`, `verify-this`, `run-smoke-tests`,
   `check-compiler-errors` — Cursor's official skills from
   [cursor/plugins `cursor-team-kit/skills`](https://github.com/cursor/plugins/tree/main/cursor-team-kit/skills).
+- `frontend-design` — verbatim from
+  [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/frontend-design)
+  (LICENSE.txt kept alongside). OMP also bundles this skill; the repo copy
+  shadows it and gives Claude Code + Codex the same version.
 - Everything else — [mattpocock/skills](https://github.com/mattpocock/skills)
   (MIT): engineering set (tdd, code-review, diagnosing-bugs, implement,
   research, triage, to-spec, domain-modeling, codebase-design,
-  resolving-merge-conflicts) + productivity set (grill-me, grilling, handoff,
-  writing-great-skills).
+  improve-codebase-architecture, prototype, resolving-merge-conflicts) +
+  productivity set (grill-me, grilling, handoff, writing-great-skills).
 
 To refresh vendored skills, re-clone the upstream repos and copy the skill
 directories over. Names are the dedup key across harnesses. Do not overwrite
