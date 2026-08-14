@@ -82,6 +82,12 @@ files a subagent can summarize.
   Training data and prior summaries are stale until rechecked.
 - **Stop the grind.** After two tool failures or three edits to the same
   file: re-read the request and the live file, then change approach.
+- **Enumerate every consumer of a shared entrypoint.** A change to solution
+  membership, the test-project set, build config, or workflow-consumed files
+  MUST enumerate every pipeline that consumes it — including non-PR-triggered
+  ones (deploy, nightly, fuzz, perf) — and state the per-pipeline impact in
+  the PR body. "PR CI is green" is not evidence about pipelines that do not
+  run on PRs.
 - **Review the system, not just the diff.** Every non-trivial PR carries a
   system recap block per `skill://system-recap`: classify the change as
   composes, extends, or adds before anyone opens the diff.

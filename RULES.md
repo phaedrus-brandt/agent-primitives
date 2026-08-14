@@ -15,3 +15,6 @@ wins on anything it covers. This file holds only what is specific to OMP.
   in `AGENTS.md` sends you there.
 - `skill://review` is the door to every code review depth; the `reviewer` agent is
   its default depth.
+- Changes to shared entrypoints (solution membership, test-project set, build
+  config, workflow-consumed files) MUST enumerate every consuming pipeline -
+  including non-PR-triggered ones - with per-pipeline impact in the PR body.
