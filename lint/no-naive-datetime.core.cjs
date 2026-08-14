@@ -24,7 +24,16 @@
  *     parse in an ambiguous zone. (`new Date("2026-07-11T11:00")` parsing in
  *     the browser zone is exactly the argumented form this bans.)
  *   - `.toLocaleDateString(...)` / `.toLocaleTimeString(...)` — unambiguously
- *     `Date` methods (no other builtin has them), so always flagged.
+ *     `Date` methods (no other builtin has them) — flagged UNLESS the call
+ *     already carries an explicit `timeZone`: a literal options-object
+ *     second argument with a `timeZone` property (any value, including
+ *     `undefined` — the property merely needs to be present; see
+ *     `hasExplicitTimeZone`, shared with the `Intl.DateTimeFormat` check
+ *     below). A non-literal/spread options argument can't be proven to carry
+ *     one, so it's still flagged — this mirrors `Date.prototype.toLocaleDateString`
+ *     and `toLocaleTimeString` being spec-equivalent to
+ *     `new Intl.DateTimeFormat(locale, options).format(date)` (ECMA-402): the
+ *     same "explicit zone" contract applies to both call shapes.
  *   - `.toLocaleString(...)` — ALSO exists on `Number`/`Array`/`BigInt`, which
  *     a codebase may call constantly for count/price formatting
  *     (`total.toLocaleString()`). Flagging every call would swamp a baseline
@@ -39,7 +48,8 @@
  *     its uses, before or after. Receivers typed `Date` through
  *     props/state/other inference are a documented NON-GOAL (this rule has
  *     no type checker); those slip through the same way they did before
- *     this rule existed.
+ *     this rule existed. Same explicit-`timeZone` exemption as the other two
+ *     methods above.
  *   - `Intl.DateTimeFormat(...)` (`new` or bare call) with no *explicit*
  *     `timeZone` — i.e. no options argument, an options object literal
  *     without a `timeZone` property, or a non-literal options argument
@@ -180,6 +190,7 @@ module.exports = {
         }
         const method = node.callee.property.name;
         if (AMBIGUOUS_LOCALE_METHODS.has(method)) {
+          if (hasExplicitTimeZone(node)) return;
           context.report({ node, messageId: "naiveFormat", data: { method } });
           return;
         }
@@ -187,6 +198,7 @@ module.exports = {
           method === "toLocaleString" &&
           isKnownDateExpression(node.callee.object)
         ) {
+          if (hasExplicitTimeZone(node)) return;
           context.report({ node, messageId: "naiveFormat", data: { method } });
         }
       },
