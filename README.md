@@ -28,9 +28,18 @@ symlinks everything into each harness (OMP, Claude Code, Codex).
   `review` skill.
 - `agents/claude/` — Claude Code subagents (worker/scout/critic) →
   `~/.claude/agents/`
+- `omp/config.yml` — OMP settings, symlinked to `~/.omp/agent/config.yml` so OMP's
+  own writes land in git. Carries `modelRoles`, `task.agentModelOverrides`,
+  `retry.fallbackChains`, and `advisor.enabled`.
+- `omp/WATCHDOG.md`, `omp/WATCHDOG.yml` — the advisor: two GPT 5.6 Luna reviewers
+  (`Correctness`, `Evidence`) that watch an Anthropic primary turn by turn and
+  inject `<advisory>` notes. `WATCHDOG.md` reaches the advisors only, never the
+  primary. `/advisor status` shows their cost; `/advisor off` stops them.
 - `agents/omp/` — OMP task agents (heavy) → `~/.omp/agent/agents/`. Bundled
-  OMP agents (task/scout/sonic/reviewer) are model-routed via
-  `~/.omp/agent/config.yml` `modelRoles` + `task.agentModelOverrides`.
+  OMP agents (task/scout/sonic/reviewer) are model-routed via `omp/config.yml`
+  `modelRoles` + `task.agentModelOverrides`.
+- `docs/upstreams.md` — every upstream we mine, its pinned commit, what we took,
+  and what we rejected. Read it before pulling from another config repo.
 
 ## Skill provenance
 
@@ -59,17 +68,21 @@ symlinks everything into each harness (OMP, Claude Code, Codex).
   [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/frontend-design)
   (LICENSE.txt kept alongside). OMP also bundles this skill; the repo copy
   shadows it and gives Claude Code + Codex the same version.
+- `evidence-packet`, `orient`, `tidy`, `foundation`, `install-anti-slop`,
+  `model-research`, `priorities` — from
+  [misty-step/omp-config](https://github.com/misty-step/omp-config), adapted.
+  `docs/upstreams.md` records each adaptation and what we rejected.
 - Everything else — [mattpocock/skills](https://github.com/mattpocock/skills)
   (MIT): engineering set (tdd, diagnosing-bugs, implement, research, triage,
   to-spec, domain-modeling, codebase-design, improve-codebase-architecture,
   prototype, resolving-merge-conflicts) + productivity set (grill-me, grilling,
   handoff, writing-great-skills).
 
-To refresh vendored skills, re-clone the upstream repos and copy the skill
-directories over. Names are the dedup key across harnesses. Do not overwrite
-`comms` on refresh — it is ours.
+To refresh vendored skills, follow `docs/upstreams.md`: re-clone at a newer
+commit, diff against our copy, take what still fits, then move the pin. Names are
+the dedup key across harnesses. Do not overwrite `comms` on refresh — it is ours.
 
-## Model policy (see `~/.omp/agent/config.yml`)
+## Model policy (see `omp/config.yml`)
 
 Orchestrator pattern, token-savvy: frontier Anthropic drives judgment.
 Subagents run on Sonnet 5 (worker), GPT 5.6 Luna xhigh (review/heavy

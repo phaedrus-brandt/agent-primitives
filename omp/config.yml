@@ -1,0 +1,84 @@
+defaultModel: anthropic/claude-fable-5
+smolModel: ollama/gpt-oss:20b
+modelRoles: 
+  worker: anthropic/claude-sonnet-5:high
+  heavy: anthropic/claude-opus-5:xhigh
+  luna: openai-codex/gpt-5.6-luna:xhigh
+  review: openai-codex/gpt-5.6-luna:xhigh
+  scout: ollama/qwen3.6:35b-a3b-q8_0
+  coder-local: ollama/qwen3-coder-next:latest
+  # Live cross-family review: the advisor watches an Anthropic primary from the
+  # OpenAI side. Keep it different from defaultModel on purpose.
+  advisor: openai-codex/gpt-5.6-luna:xhigh
+advisor:
+  enabled: true
+task: 
+  enableLsp: true
+  agentModelOverrides: 
+    task: "@worker"
+    scout: "@scout"
+    librarian: "@scout"
+    sonic: "@coder-local"
+    reviewer: "@review"
+retry: 
+  modelFallback: true
+  usageAwareFallback: true
+  fallbackChains: 
+    anthropic/*: 
+      - ollama/qwen3-coder-next:latest
+      - ollama/qwen3.6:35b-a3b-q8_0
+      - ollama/gpt-oss:20b
+    openai-codex/*: 
+      - ollama/qwen3-coder-next:latest
+      - ollama/qwen3.6:35b-a3b-q8_0
+      - ollama/gpt-oss:20b
+    default: 
+      - ollama/qwen3.6:35b-a3b-q8_0
+      - ollama/gpt-oss:20b
+disabledProviders: 
+  - aimlapi
+  - alibaba-coding-plan
+  - amazon-bedrock
+  - azure
+  - cerebras
+  - cloudflare-ai-gateway
+  - cursor
+  - deepseek
+  - firepass
+  - fireworks
+  - gemini
+  - github-copilot
+  - gitlab-duo
+  - google
+  - google-antigravity
+  - google-gemini-cli
+  - google-vertex
+  - groq
+  - huggingface
+  - kilo
+  - kimi-code
+  - minimax
+  - mistral
+  - moonshot
+  - nanogpt
+  - nvidia
+  - ollama-cloud
+  - opencode-zen
+  - openrouter
+  - qianfan
+  - qwen-portal
+  - synthetic
+  - together
+  - umans
+  - venice
+  - vercel-ai-gateway
+  - wafer-serverless
+  - xai
+  - xai-oauth
+  - xiaomi
+  - zai
+  - zenmux
+  - zhipu-coding-plan
+setupVersion: 1
+dev: 
+  autoqaConsent: granted

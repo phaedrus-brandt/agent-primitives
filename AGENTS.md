@@ -32,10 +32,16 @@ one-line fix, or work the human already specified in this conversation.
 | Any code review, at any depth | `review` |
 | Something is broken, throwing, or slow | `diagnosing-bugs` |
 | Prove a claim with fresh evidence | `verify-this` |
+| Assemble reviewable proof for a change | `evidence-packet` |
 | Compile and type-check | `check-compiler-errors` |
+| Settle a messy work tree into clean commits | `tidy` |
+| State where the work stands | `orient` |
+| Rank what to do next from the ledger | `priorities` |
+| Set up a repo's engineering controls | `foundation`; TypeScript lint controls with `install-anti-slop` |
 | Open or update a PR | `system-recap`, then `comms` |
 | Hand the work to another agent | `handoff` |
 | Research an external library or API | `research` |
+| Check OMP model selectors and routes | `model-research` |
 | Write or edit a skill | `writing-great-skills` |
 
 ## Communication
@@ -62,6 +68,10 @@ framing, decomposition, review, final verification. Push bulk work down:
 - **Cross-model review** → a different model family reviews every non-trivial
   diff. Fresh context beats self-review: give critics only the artifact and
   the acceptance criteria, never your reasoning trail.
+- **Live cross-model watch** → OMP's advisor runs GPT 5.6 Luna against an
+  Anthropic primary every turn (`omp/WATCHDOG.yml`). Weigh an `<advisory>` note
+  on its evidence; it advises, it does not command. `/advisor status` shows its
+  cost.
 
 Escalate on failure, never on faith. Do not burn frontier tokens reading
 files a subagent can summarize.
@@ -75,8 +85,12 @@ files a subagent can summarize.
 - **Root cause, not symptom.** Never suppress a warning, special-case an
   input, or lower a gate (disable a test, loosen a lint, weaken a threshold)
   to get green.
-- **Delete before adding.** Keep the surface small. Match existing repo
-  patterns before inventing an abstraction. No speculative generality.
+- **Delete before adding, in this order.** 1. Challenge the requirement: name the
+  person who owns it, or the evidence that binds it. 2. Delete what nothing
+  supports — code, state, config, compatibility paths, tests, process. 3. Simplify
+  what remains. 4. Then make it faster. 5. Automate only stable, measured work.
+  Match existing repo patterns before inventing an abstraction. No speculative
+  generality.
 - **Test behavior, not implementation.** Mock only external boundaries.
 - **Plausible ≠ correct.** Re-read live files after compaction or handoff.
   Training data and prior summaries are stale until rechecked.

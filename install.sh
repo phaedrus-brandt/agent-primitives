@@ -96,6 +96,14 @@ link "$REPO/AGENTS.md" ~/.claude/CLAUDE.md   # Claude Code + OMP
 link "$REPO/AGENTS.md" ~/.codex/AGENTS.md    # Codex
 link "$REPO/RULES.md" ~/.omp/agent/RULES.md  # OMP always-apply rule
 
+echo "omp:"
+mkdir -p ~/.omp/agent
+# config.yml is a symlink on purpose: OMP writes its own keys back (setupVersion,
+# /mcp edits), and we want that drift in git where we can review it.
+link "$REPO/omp/config.yml" ~/.omp/agent/config.yml
+link "$REPO/omp/WATCHDOG.md" ~/.omp/agent/WATCHDOG.md   # advisor-only guidance
+link "$REPO/omp/WATCHDOG.yml" ~/.omp/agent/WATCHDOG.yml # advisor roster
+
 echo "mcp:"
 mkdir -p ~/.omp/agent
 link "$REPO/mcp/mcp.json" ~/.omp/agent/mcp.json
