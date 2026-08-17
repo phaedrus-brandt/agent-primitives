@@ -30,11 +30,16 @@ symlinks everything into each harness (OMP, Claude Code, Codex).
   `~/.claude/agents/`
 - `omp/config.yml` — OMP settings, symlinked to `~/.omp/agent/config.yml` so OMP's
   own writes land in git. Carries `modelRoles`, `task.agentModelOverrides`,
-  `retry.fallbackChains`, and `advisor.enabled`.
+  `task.agentAdvisor`, `retry.fallbackChains`, and `advisor.enabled`.
 - `omp/WATCHDOG.md`, `omp/WATCHDOG.yml` — the advisor: two GPT 5.6 Luna reviewers
   (`Correctness`, `Evidence`) that watch an Anthropic primary turn by turn and
   inject `<advisory>` notes. `WATCHDOG.md` reaches the advisors only, never the
   primary. `/advisor status` shows their cost; `/advisor off` stops them.
+  `task.agentAdvisor` extends the watch to writing subagents and only those:
+  `task` gets Luna at medium effort, `sonic` gets the local scout model, `heavy`
+  gets Luna at full effort; `scout`, `librarian`, `reviewer`, and
+  `security-reviewer` stay unadvised. Measured cost: about 5k input tokens and
+  $0.001 per advisor turn.
 - `agents/omp/` — OMP task agents (heavy) → `~/.omp/agent/agents/`. Bundled
   OMP agents (task/scout/sonic/reviewer) are model-routed via `omp/config.yml`
   `modelRoles` + `task.agentModelOverrides`.

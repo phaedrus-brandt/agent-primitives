@@ -20,6 +20,18 @@ task:
     librarian: "@scout"
     sonic: "@coder-local"
     reviewer: "@review"
+  # Subagent advisors, per agent. Writers get watched; readers and critics do
+  # not, because an advisor on a read-only or reviewing lane buys no gate.
+  # Effort is matched to stakes: local watcher on the local coder, medium-effort
+  # Luna on the Sonnet worker, full-effort Luna on the Opus lane.
+  agentAdvisor: 
+    task: "openai-codex/gpt-5.6-luna:high"
+    sonic: "@scout"
+    heavy: "@review"
+    scout: "off"
+    librarian: "off"
+    reviewer: "off"
+    security-reviewer: "off"
 retry: 
   modelFallback: true
   usageAwareFallback: true

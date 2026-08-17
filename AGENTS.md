@@ -69,9 +69,11 @@ framing, decomposition, review, final verification. Push bulk work down:
   diff. Fresh context beats self-review: give critics only the artifact and
   the acceptance criteria, never your reasoning trail.
 - **Live cross-model watch** → OMP's advisor runs GPT 5.6 Luna against an
-  Anthropic primary every turn (`omp/WATCHDOG.yml`). Weigh an `<advisory>` note
-  on its evidence; it advises, it does not command. `/advisor status` shows its
-  cost.
+  Anthropic primary every turn (`omp/WATCHDOG.yml`): `Correctness` hunts
+  defects, `Evidence` hunts unproven claims. Writing subagents are watched too
+  (`task`, `sonic`, `heavy`); read-only and reviewing lanes are not. Weigh an
+  `<advisory>` note on its evidence; it advises, it does not command.
+  `/advisor status` shows the cost, `/advisor off` stops it.
 
 Escalate on failure, never on faith. Do not burn frontier tokens reading
 files a subagent can summarize.
