@@ -26,14 +26,14 @@
  *   - `.toLocaleDateString(...)` / `.toLocaleTimeString(...)` — unambiguously
  *     `Date` methods (no other builtin has them) — flagged UNLESS the call
  *     already carries an explicit `timeZone`: a literal options-object
- *     second argument with a `timeZone` property (any value, including
- *     `undefined` — the property merely needs to be present; see
- *     `hasExplicitTimeZone`, shared with the `Intl.DateTimeFormat` check
- *     below). A non-literal/spread options argument can't be proven to carry
- *     one, so it's still flagged — this mirrors `Date.prototype.toLocaleDateString`
- *     and `toLocaleTimeString` being spec-equivalent to
- *     `new Intl.DateTimeFormat(locale, options).format(date)` (ECMA-402): the
- *     same "explicit zone" contract applies to both call shapes.
+ *     second argument with a `timeZone` property whose value isn't the
+ *     literal `undefined`/`null` (see `hasExplicitTimeZone`, shared with
+ *     the `Intl.DateTimeFormat` check below — the same "explicit zone"
+ *     contract applies to both call shapes, since
+ *     `Date.prototype.toLocaleDateString`/`toLocaleTimeString` are
+ *     spec-equivalent to `new Intl.DateTimeFormat(locale, options).format(date)`,
+ *     ECMA-402). A non-literal/spread options argument can't be proven to
+ *     carry one, so it's still flagged.
  *   - `.toLocaleString(...)` — ALSO exists on `Number`/`Array`/`BigInt`, which
  *     a codebase may call constantly for count/price formatting
  *     (`total.toLocaleString()`). Flagging every call would swamp a baseline
@@ -52,8 +52,16 @@
  *     methods above.
  *   - `Intl.DateTimeFormat(...)` (`new` or bare call) with no *explicit*
  *     `timeZone` — i.e. no options argument, an options object literal
- *     without a `timeZone` property, or a non-literal options argument
- *     (can't prove a zone is present, so treated as missing one).
+ *     without a `timeZone` property, a non-literal options argument (can't
+ *     prove a zone is present, so treated as missing one), or a `timeZone`
+ *     property whose value is the literal `undefined`/`null` (an explicit
+ *     "no zone" — same bug this rule bans, not an escape from it). The same
+ *     three checks (present, not a bare `undefined`/`null`) gate the
+ *     `.toLocaleDateString`/`.toLocaleTimeString`/`.toLocaleString`
+ *     exemption above — a bare identifier, ternary, or member expression as
+ *     the value still counts as explicit; proving an arbitrary identifier
+ *     is non-`undefined` at runtime needs a type checker this rule doesn't
+ *     have.
  *
  * EXCEPT: the tz module's own implementation (where these primitives are
  * legitimately implemented) and test files — enforced by each repo's
@@ -97,14 +105,29 @@ function propertyKeyName(property) {
   return null;
 }
 
-/** True only when the options arg is a literal object with a `timeZone` key. */
+/**
+ * True only when the options arg is a literal object with a `timeZone`
+ * property whose value isn't PROVABLY absent. Proving an arbitrary
+ * identifier is non-`undefined` at runtime needs a type checker this rule
+ * doesn't have, so it isn't attempted — but the literal `undefined`/`null`
+ * tokens ARE statically provable and are exactly the shape a caller writes
+ * when they mean "no zone" (e.g. `{ timeZone: undefined }`), which is the
+ * same viewer-zone bug this rule exists to catch. Reject only that narrow,
+ * unambiguous case; every other expression (a bare identifier, a ternary, a
+ * member expression, a string literal) still counts as explicit.
+ */
 function hasExplicitTimeZone(node) {
   const optionsArg = node.arguments[1];
   if (!optionsArg) return false;
   if (optionsArg.type !== "ObjectExpression") return false; // dynamic — can't prove it
-  return optionsArg.properties.some(
+  const timeZoneProperty = optionsArg.properties.find(
     (property) => propertyKeyName(property) === "timeZone",
   );
+  if (!timeZoneProperty) return false;
+  const value = timeZoneProperty.value;
+  const isLiteralUndefined = value.type === "Identifier" && value.name === "undefined";
+  const isLiteralNull = value.type === "Literal" && value.value === null;
+  return !isLiteralUndefined && !isLiteralNull;
 }
 
 /** @type {import('eslint').Rule.RuleModule} */
